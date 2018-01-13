@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 import sys
+import numy as np
 
 cap = cv2.VideoCapture(sys.argv[1])
 
@@ -14,7 +15,7 @@ while(1):
 
     cv2.imshow('frame',fgmask)
     i+=1
-    if i == 20:
+    if i == 30*4:
         from IPython import embed; embed()
     k = cv2.waitKey(30) & 0xff
     if k == 27:

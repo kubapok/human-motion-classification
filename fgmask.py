@@ -9,24 +9,33 @@ def get_index_corner(hist, stopit):
             return i
 
 
-fgmask = cv2.imread('fgmask.jpg', cv2.IMREAD_GRAYSCALE)
-hhist = np.count_nonzero(fgmask, axis=0)
-vhist = np.count_nonzero(fgmask, axis=1)
+def get_POI(hist, quantile):
+    hhist = get_hhist(hist)
+    vhist = get_vhist(hist)
+    hqd = quantile * sum(hhist)
+    hqu = (1 - quantile) * sum(hhist)
+    vqd = quantile * sum(vhist)
+    vqu = (1 - quantile) * sum(vhist)
+
+    lindex = get_index_corner(hhist, vqd)
+    rindex = get_index_corner(hhist, vqu)
+    dindex = get_index_corner(vhist, hqd)
+    uindex = get_index_corner(vhist, hqu)
+
+    return (lindex, rindex, dindex, uindex)
 
 
-hq5 = 0.03 * sum(hhist)
-hq95 = 0.97 * sum(hhist)
-vq5 = 0.03 * sum(vhist)
-vq95 = 0.93 * sum(vhist)
+def get_hhist(img):
+    return np.count_nonzero(fgmask, axis=0)
 
 
-lindex = get_index_corner(hhist, vq5)
-rindex = get_index_corner(hhist, vq95)
-dindex = get_index_corner(vhist, hq5)
-uindex = get_index_corner(vhist, hq95)
+def get_vhist(img):
+    return np.count_nonzero(fgmask, axis=1)
 
 
+# fgmask = cv2.imread('fgmask.jpg', cv2.IMREAD_GRAYSCALE)
 img = cv2.imread('fgmask.jpg')
-# :cv2.rectangle(fgmask, (lindex, dindex ), (rindex, uindex ), (0, 255, 0), 3)
-cv2.rectangle(img, (lindex, dindex ), (rindex, uindex ), (0, 255, 0), 3)
-cv2.imwrite('a.jpg',img)
+fgmask = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+lindex, rindex, dindex, uindex = get_POI(fgmask, 0.02)
+cv2.rectangle(img, (lindex, dindex), (rindex, uindex), (0, 255, 0), 3)
+cv2.imwrite('a.jpg', img)

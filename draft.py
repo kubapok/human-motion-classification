@@ -5,7 +5,8 @@ import sys
 
 
 def get_index_corner(hist, stopit):
-    cumulated = [sum(hist[:i]) for i in range(len(hist))]
+    # cumulated = [sum(hist[:i]) for i in range(len(hist))]
+    cumulated = np.cumsum(hist)
     for i in range(len(cumulated)):
         if stopit < cumulated[i]:
             return i
@@ -23,6 +24,7 @@ def get_POI(hist, quantile):
     rindex = get_index_corner(hhist, vqu)
     dindex = get_index_corner(vhist, hqd)
     uindex = get_index_corner(vhist, hqu)
+    # return (100, 300, 100, 300)
     return (lindex, rindex, dindex, uindex)
 
 
@@ -46,7 +48,8 @@ while(1):
     if np.count_nonzero(fgmask) > 100:
         fgmask_grey = fgmask
         lindex, rindex, dindex, uindex = get_POI(fgmask_grey, 0.02)
-        cv2.rectangle(frame, (lindex, dindex), (rindex, uindex), (0, 255, 0), 3)
+        if lindex and rindex and dindex and uindex:
+            cv2.rectangle(frame, (lindex, dindex), (rindex, uindex), (0, 255, 0), 3)
 
     cv2.imshow('frame',frame)
     k = cv2.waitKey(30) & 0xff

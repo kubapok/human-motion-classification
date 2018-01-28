@@ -2,11 +2,14 @@ import numpy as np
 import cv2
 import sys
 from ROI import ROI
-
+from fuzzy_classifier import FuzzyClassifier
 
 cap = cv2.VideoCapture(sys.argv[1])
 
 fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
+
+classifier = FuzzyClassifier()
+classifier.plot_variables()
 
 i = 0
 ROIframe = np.zeros((480, 640), dtype=np.uint8)
@@ -31,7 +34,16 @@ while(1):
             ROIonly_flow_gray = flow[dindex: uindex, lindex:rindex]
             vertical_movement, horizontal_movement = cv2.split(
                 ROIonly_flow_gray)
-            print(vertical_movement.sum(), '\t' * 5, horizontal_movement.sum())
+
+            #***
+            height = uindex - dindex
+            width = rindex - lindex
+            data = (vertical_movement.sum(), horizontal_movement.sum(), height, width)
+            motion = classifier.classify(data)
+            print(vertical_movement.sum(), '\t', horizontal_movement.sum(), '\t', height, '\t', width, '\t', motion)
+            #***
+
+            #print(vertical_movement.sum(), '\t' * 5, horizontal_movement.sum())
             prvs = ROIframe_gray
             i += 1
             cv2.line(frame, (400, 100), (400+int(vertical_movement.sum()/1000), 100 + int(horizontal_movement.sum() / 1000)), (255, 0, 0), 5)

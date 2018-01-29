@@ -2,8 +2,16 @@ import csv
 from sklearn import tree
 
 
-
 class tree_classifier():
+
+    classes_dict = {0: 'going_left',
+                    1: 'going_right',
+                    2: 'falling',
+                    3: 'just_sitting',
+                    4: 'just_standing',
+                    5: 'lying_down',
+                    6: 'sitting_down',
+                    7: 'standing_up'}
 
     def train():
         going_left = tree_classifier.load_class('going_left')
@@ -30,15 +38,18 @@ class tree_classifier():
         standing_up = tree_classifier.load_class('standing_up')
         standing_up_value = [7 for _ in range(len(standing_up))]
 
-
-        X = going_left + going_right + falling + just_sitting + just_standing + lying_down + sitting_down + standing_up
-        Y = going_left_value + going_right_value + falling_value + just_sitting_value + just_standing_value + lying_down_value + sitting_down_value + standing_up_value
+        X = going_left + going_right + falling + just_sitting + \
+            just_standing + lying_down + sitting_down + standing_up
+        Y = going_left_value + going_right_value + falling_value + just_sitting_value + \
+            just_standing_value + lying_down_value + sitting_down_value + standing_up_value
 
         tree_classifier.clf = tree.DecisionTreeClassifier()
-        tree_classifier.clf.fit(X,Y)
+        tree_classifier.clf.fit(X, Y)
 
         return tree_classifier.clf.predict([[43.48047639929654, 4.3354936021207635, 3.59]])
 
+    def predict(sample):
+        return tree_classifier.clf.predict([sample])[0]
 
     def load_class(class_name):
         l2 = []

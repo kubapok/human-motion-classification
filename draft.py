@@ -11,6 +11,8 @@ fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
 
 classifier = FuzzyClassifier()
 # classifier.plot_variables()
+from tree_classifier import tree_classifier
+tree_classifier.train()
 
 i = 0
 ROIframe = np.zeros((480, 640), dtype=np.uint8)
@@ -61,6 +63,8 @@ while(1):
             data = (vertical_movement.sum(), horizontal_movement.sum(), height, width)
             motion = classifier.classify(data)
             print(mean(v_motion_history), '\t', mean(h_motion_history) , '\t', float("{0:.2f}".format(mean(ratio_history))))
+            predicted = tree_classifier.predict([mean(v_motion_history),mean(h_motion_history), mean(ratio_history)])
+            print(tree_classifier.classes_dict[predicted])
             #***
 
             prvs = ROIframe_gray

@@ -9,7 +9,7 @@ class tree_classifier():
                     2: 'falling',
                     3: 'just_sitting',
                     4: 'just_standing',
-                    5: 'lying_down',
+                    5: 'just_lying',
                     6: 'sitting_down',
                     7: 'standing_up'}
 

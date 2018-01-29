@@ -43,7 +43,7 @@ class tree_classifier():
         Y = going_left_value + going_right_value + falling_value + just_sitting_value + \
             just_standing_value + lying_down_value + sitting_down_value + standing_up_value
 
-        tree_classifier.clf = tree.DecisionTreeClassifier()
+        tree_classifier.clf = tree.DecisionTreeClassifier(max_depth = 10)
         tree_classifier.clf.fit(X, Y)
 
         return tree_classifier.clf.predict([[43.48047639929654, 4.3354936021207635, 3.59]])

@@ -62,9 +62,8 @@ while(1):
 
             data = (vertical_movement.sum(), horizontal_movement.sum(), height, width)
             motion = classifier.classify(data)
-            print(mean(v_motion_history), '\t', mean(h_motion_history) , '\t', float("{0:.2f}".format(mean(ratio_history))))
             predicted = tree_classifier.predict([mean(v_motion_history),mean(h_motion_history), mean(ratio_history)])
-            print(tree_classifier.classes_dict[predicted])
+            print(tree_classifier.classes_dict[predicted],'\t',float("{0:.2f}".format(mean(v_motion_history))), '\t', float("{0:.2f}".format(mean(h_motion_history))) , '\t', float("{0:.2f}".format(mean(ratio_history))), '\t')
             #***
 
             prvs = ROIframe_gray

@@ -59,11 +59,11 @@ class FuzzyClassifier(object):
 
 
     def plot_variables(self):
-        self.v_move.view()
-        self.h_move.view()
+        #self.v_move.view()
+        #self.h_move.view()
         self.height.view()
-        self.width.view()
-        self.motion.view()
+        #self.width.view()
+        #self.motion.view()
         input("Press Enter to continue...")
 
 

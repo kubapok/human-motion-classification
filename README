@@ -1,1 +1,9 @@
-python3 draft.py  kuba.webm
+python3 classify_by_fuzzy_logic.py test.webm # to run classification by fuzzy logic, or:
+python3 classify_by_decision_tree.py test.webm # to run classification by decision tree (works better)
+
+classes.tsv are tagged with kuba.webm movie and deciion tree in is trained on it.
+For decision tree test with test.webm in order not to make resubstitution.
+
+opencv compiled against opencv_contrib and python3 bindings required
+pip3 install sklearn # in order to use decision tree
+pip3 install scikit-fuzzy # in order to use decision tree

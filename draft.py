@@ -3,13 +3,16 @@ import cv2
 import sys
 from ROI import ROI
 from fuzzy_classifier import FuzzyClassifier
+from statistics import mean
 
 cap = cv2.VideoCapture(sys.argv[1])
 
 fgbg = cv2.bgsegm.createBackgroundSubtractorMOG()
 
 classifier = FuzzyClassifier()
-classifier.plot_variables()
+# classifier.plot_variables()
+from tree_classifier import tree_classifier
+tree_classifier.train()
 
 i = 0
 ROIframe = np.zeros((480, 640), dtype=np.uint8)
@@ -18,6 +21,11 @@ ret, frame = cap.read()
 prvs = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 lindex, rindex, uindex, dindex, = 0, 10, 0, 10
 i = 0
+
+ratio_history = [0 for _ in range(10)]
+v_motion_history = [0 for _ in range(10)]
+h_motion_history = [0 for _ in range(10)]
+
 while(1):
     ret, frame = cap.read()
 
@@ -38,12 +46,26 @@ while(1):
             #***
             height = uindex - dindex
             width = rindex - lindex
+            v = height * width
+
+
+            ratio = height/width
+            v_motion = 10*vertical_movement.sum()/v
+            h_motion = 10*horizontal_movement.sum()/v
+
+            ratio_history.append(ratio)
+            ratio_history = ratio_history[1:]
+            v_motion_history.append(v_motion)
+            v_motion_history = v_motion_history[1:]
+            h_motion_history.append(h_motion)
+            h_motion_history = h_motion_history[1:]
+
             data = (vertical_movement.sum(), horizontal_movement.sum(), height, width)
             motion = classifier.classify(data)
-            print(vertical_movement.sum(), '\t', horizontal_movement.sum(), '\t', height, '\t', width, '\t', motion)
+            predicted = tree_classifier.predict([mean(v_motion_history),mean(h_motion_history), mean(ratio_history)])
+            print(tree_classifier.classes_dict[predicted],'\t',float("{0:.2f}".format(mean(v_motion_history))), '\t', float("{0:.2f}".format(mean(h_motion_history))) , '\t', float("{0:.2f}".format(mean(ratio_history))), '\t')
             #***
 
-            #print(vertical_movement.sum(), '\t' * 5, horizontal_movement.sum())
             prvs = ROIframe_gray
             i += 1
             cv2.line(frame, (400, 100), (400+int(vertical_movement.sum()/1000), 100 + int(horizontal_movement.sum() / 1000)), (255, 0, 0), 5)
@@ -52,9 +74,6 @@ while(1):
                 pass
     cv2.rectangle(frame, (lindex, dindex),
                   (rindex, uindex), (0, 255, 0), 3)
-    # cv2.rectangle(frame, (240, 320),
-    #               (242, 322), (0, 0, 255), 3)
-    # cv2.line(frame, (400, 100), (400+vertical_movement.sum()/1000, 100 + horizontal_movement.sum() / 1000), (255, 0, 0), 5)
 
     cv2.imshow('frame', frame)
     k = cv2.waitKey(30) & 0xff
